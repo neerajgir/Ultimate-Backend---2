@@ -70,4 +70,14 @@ const logIn = async (req,res) => {
         return res.status(400).json(error)
     }
 }
-export {signUp, logIn}
+
+const logOut = async (req, res) => {
+    try {
+        res.clearCookie("token")
+        return res.status(200).json({message: "Logout Successfully."})
+    } catch (error) {
+        return res.status(400).json(error)
+    }
+}
+
+export {signUp, logIn, logOut}
