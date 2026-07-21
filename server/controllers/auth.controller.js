@@ -41,4 +41,33 @@ const signUp = async (req, res) => {
     }
 } 
 
-export {signUp}
+const logIn = async (req,res) => {
+    try {
+        const {email, password} = req.body
+        const existUser = await User.findOne({email})
+        if(!existUser) {
+            return res.status(400).json({message: "User Does Not Exist."})
+        }
+
+        const comparePassword = await bcrypt.compare(password, existUser.password)
+        if(!comparePassword) {
+            return res.status(400).json({message: "Incorrect Password"})
+        }
+        const token = generateToken(existUser._id)
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENVIRONMENT == "production",
+            sameSite: "strict",
+            maxAge: 7*24*60*60*1000
+        })
+        return res.status(201).json({message: "Login Successfully."},{user: {
+            firstName: existUser.firstName,
+            lastName: existUser.lastName,
+            email: existUser.email,
+            userName: existUser.userName
+        }})
+    } catch (error) {
+        return res.status(400).json(error)
+    }
+}
+export {signUp, logIn}
