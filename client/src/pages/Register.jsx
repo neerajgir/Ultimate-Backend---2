@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useRef, useState } from 'react'
 import DP from "../assets/DP.webp"
 import { dataContext } from '../context/UserContext';
 import axios from "axios"
@@ -10,7 +10,10 @@ const Register = () => {
   const [Email, setEmail] = useState("")
   const [Password, setPassword] = useState("")
   let {serverUrl} = useContext(dataContext)
-
+  
+  // It is better to start refs for elements as null instead of an empty string
+  let file = useRef(null) 
+  
   const handleRegister = async(e) => {
     e.preventDefault()
     try {
@@ -27,6 +30,18 @@ const Register = () => {
     }
   }
 
+  let [frontendImage, setFrontendImage] = useState(DP)
+  let [backendImage, setBackendImage] = useState(null)
+  
+  const handleImage = (e) => {
+    let selectedFile = e.target.files[0]
+    if (!selectedFile) return 
+    
+    setBackendImage(selectedFile)
+    let image = URL.createObjectURL(selectedFile)
+    setFrontendImage(image)
+  }
+
   return (
     <div className="min-h-screen bg-neutral-950 flex justify-center items-center p-4">
       <div className="w-full max-w-md bg-neutral-900 border border-neutral-800 rounded-2xl shadow-2xl p-8 flex flex-col gap-6">
@@ -37,9 +52,13 @@ const Register = () => {
         </div>
 
         <form className="w-full flex flex-col gap-4" onSubmit={handleRegister}>
+          <input type="file" hidden ref={file} onChange={handleImage} accept="image/*" />
           
-          <div className="mx-auto w-24 h-24 rounded-full bg-neutral-800 flex flex-col overflow-hidden relative border-2 border-neutral-700 group cursor-pointer">
-            <img src={DP} alt="Profile" className="w-full h-full object-cover" />
+          <div 
+            className="mx-auto w-24 h-24 rounded-full bg-neutral-800 flex flex-col overflow-hidden relative border-2 border-neutral-700 group cursor-pointer"
+            onClick={() => file.current.click()}
+          >
+            <img src={frontendImage} alt="Profile" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex justify-center items-center text-white font-semibold text-2xl">
               +
             </div>
