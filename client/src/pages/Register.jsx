@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react'
 import DP from "../assets/DP.webp"
 import { dataContext } from '../context/UserContext';
 import axios from "axios"
+
 const Register = () => {
   const [FirstName, setFirstName] = useState("")
   const [LastName, setLastName] = useState("")
@@ -90,6 +91,11 @@ const Register = () => {
           </button>
           
         </form>
+
+        <p className="text-center text-neutral-400 text-sm mt-2">
+          Already have an account? <a href="/login" className="text-cyan-500 cursor-pointer hover:underline">Log in</a>
+        </p>
+
       </div>
     </div>
   )

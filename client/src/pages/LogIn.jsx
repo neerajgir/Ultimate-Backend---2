@@ -16,7 +16,7 @@ const LogIn = () => {
         },{withCredentials:true})
         console.log(data)
     } catch (error) {
-        console.log(error.message)
+        alert(error.response.data.message)
     }
     console.log({ Email, Password })
   }
