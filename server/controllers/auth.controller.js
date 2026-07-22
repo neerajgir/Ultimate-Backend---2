@@ -60,7 +60,7 @@ const logIn = async (req,res) => {
             sameSite: "strict",
             maxAge: 7*24*60*60*1000
         })
-        return res.status(201).json({message: "Login Successfully."},{user: {
+        return res.status(200).json({message: "Login Successfully.", user: {
             firstName: existUser.firstName,
             lastName: existUser.lastName,
             email: existUser.email,

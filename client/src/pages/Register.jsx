@@ -1,29 +1,94 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import DP from "../assets/DP.webp"
+import { dataContext } from '../context/UserContext';
+import axios from "axios"
 const Register = () => {
-  const [FirstName, setFirstName] = useState(null)
-  const [LastName, setLastName] = useState(null)
-  const [UserName, setUserName] = useState(null)
-  const [Email, setEmail] = useState(null)
-  const [Password, setPassword] = useState(null)
+  const [FirstName, setFirstName] = useState("")
+  const [LastName, setLastName] = useState("")
+  const [UserName, setUserName] = useState("")
+  const [Email, setEmail] = useState("")
+  const [Password, setPassword] = useState("")
+  let {serverUrl} = useContext(dataContext)
+
+  const handleRegister = async(e) => {
+    e.preventDefault()
+    try {
+      let data = await axios.post(serverUrl + "/api/signup", {
+        firstName: FirstName,
+        lastName: LastName,
+        userName: UserName,
+        email: Email,
+        password: Password
+      }, {withCredentials: true})
+      console.log(data);
+    } catch (error) {
+      console.log(error.response?.data?.message || error.message);
+    }
+  }
 
   return (
-    <div className="w-full h-screen bg-black flex justify-center items-center">
-      <div className="w-[90%] max-w-100 h-125 bg-[#141f1f] rounded flex flex-col justify-center items-center gap-5">
-        <h1 className="text-white text-2xl font-semibold">Register</h1>
-        <form className="w-full flex flex-col justify-center items-center gap-5">
-          <div className="w-25 h-25 rounded-full bg-white flex flex-col overflow-hidden relative border-2 border-amber-50">
-            <img src={DP} alt="DP" className="w-full h-full" />
-            <div className="absolute w-25 h-25 bg-black top-0 hover:opacity-50 opacity-0 cursor-pointer flex justify-center items-center text-amber-50 font-semibold text-[20px]">+</div>
+    <div className="min-h-screen bg-neutral-950 flex justify-center items-center p-4">
+      <div className="w-full max-w-md bg-neutral-900 border border-neutral-800 rounded-2xl shadow-2xl p-8 flex flex-col gap-6">
+        
+        <div className="text-center">
+          <h1 className="text-white text-3xl font-bold tracking-tight">Register</h1>
+          <p className="text-neutral-400 text-sm mt-2">Create your account to get started.</p>
+        </div>
+
+        <form className="w-full flex flex-col gap-4" onSubmit={handleRegister}>
+          
+          <div className="mx-auto w-24 h-24 rounded-full bg-neutral-800 flex flex-col overflow-hidden relative border-2 border-neutral-700 group cursor-pointer">
+            <img src={DP} alt="Profile" className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex justify-center items-center text-white font-semibold text-2xl">
+              +
+            </div>
           </div>
-          <div className="w-[80%] h-12.5 flex justify-center items-center gap-2.5">
-            <input type="text" placeholder="First Name" className="w-[50%] h-full bg-white outline-none border-none rounded-lg px-2.5 py-1.5" value={FirstName} onChange={(e)=>setLastName(e.target.value)}/>
-            <input type="text" placeholder="Last Name" className="w-[50%] h-full bg-white outline-none border-none rounded-lg px-2.5 py-1.5" value={LastName} onChange={(e)=>setLastName(e.target.value)}/>
+
+          <div className="flex gap-3">
+            <input 
+              type="text" 
+              placeholder="First Name" 
+              className="w-1/2 h-12 bg-neutral-950 text-white outline-none border border-neutral-800 focus:border-cyan-500 rounded-xl px-4 transition-colors placeholder:text-neutral-500" 
+              value={FirstName} 
+              onChange={(e) => setFirstName(e.target.value)}
+            />
+            <input 
+              type="text" 
+              placeholder="Last Name" 
+              className="w-1/2 h-12 bg-neutral-950 text-white outline-none border border-neutral-800 focus:border-cyan-500 rounded-xl px-4 transition-colors placeholder:text-neutral-500" 
+              value={LastName} 
+              onChange={(e) => setLastName(e.target.value)}
+            />
           </div>
-          <input type="text" placeholder="Username" className="w-[80%] h-12.5 bg-white outline-none border-none rounded-lg px-2.5 py-1.5" value={UserName} onChange={(e)=>setUserName(e.target.value)}/>
-          <input type="email" placeholder="Email" className="w-[80%] h-12.5 bg-white outline-none border-none rounded-lg px-2.5 py-1.5" value={Email} onChange={(e)=>setEmail(e.target.value)}/>
-          <input type="password" placeholder="Password" className="w-[80%] h-12.5 bg-white outline-none border-none rounded-lg px-2.5 py-1.5" value={Password} onChange={(e)=>setPassword(e.target.value)}/>
-          <button className="bg-[#07c7e4] text-black px-2.5 py-1.5 rounded-lg">Sign Up</button>
+
+          <input 
+            type="text" 
+            placeholder="Username" 
+            className="w-full h-12 bg-neutral-950 text-white outline-none border border-neutral-800 focus:border-cyan-500 rounded-xl px-4 transition-colors placeholder:text-neutral-500" 
+            value={UserName} 
+            onChange={(e) => setUserName(e.target.value)}
+          />
+          
+          <input 
+            type="email" 
+            placeholder="Email" 
+            className="w-full h-12 bg-neutral-950 text-white outline-none border border-neutral-800 focus:border-cyan-500 rounded-xl px-4 transition-colors placeholder:text-neutral-500" 
+            value={Email} 
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          
+          <input 
+            type="password" 
+            placeholder="Password" 
+            className="w-full h-12 bg-neutral-950 text-white outline-none border border-neutral-800 focus:border-cyan-500 rounded-xl px-4 transition-colors placeholder:text-neutral-500" 
+            value={Password} 
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          
+          <button className="w-full bg-cyan-500 hover:bg-cyan-400 text-neutral-950 font-bold text-lg h-12 rounded-xl mt-2 transition-all active:scale-95">
+            Sign Up
+          </button>
+          
         </form>
       </div>
     </div>
