@@ -3,18 +3,19 @@ import { dataContext } from '../context/UserContext';
 import axios from 'axios';
 
 const LogIn = () => {
-    let {serverUrl} = useContext(dataContext)
+  let {serverUrl, userData, setUserData, getUserData} = useContext(dataContext)
   const [Email, setEmail] = useState("")
   const [Password, setPassword] = useState("")
-
+  
   const handleLogin = async(e) => {
     e.preventDefault()
     try {
-        let data = await axios.post(serverUrl + "/api/login", {
+        let {data} = await axios.post(serverUrl + "/api/login", {
             email: Email,
             password: Password
         },{withCredentials:true})
-        console.log(data)
+       await getUserData()
+        setUserData(data)
     } catch (error) {
         alert(error.response.data.message)
     }

@@ -2,6 +2,7 @@ import React, { useContext, useRef, useState } from 'react'
 import DP from "../assets/DP.webp"
 import { dataContext } from '../context/UserContext';
 import axios from "axios"
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
   const [FirstName, setFirstName] = useState("")
@@ -9,8 +10,8 @@ const Register = () => {
   const [UserName, setUserName] = useState("")
   const [Email, setEmail] = useState("")
   const [Password, setPassword] = useState("")
-  let {serverUrl} = useContext(dataContext)
-  
+  let {serverUrl, userData, setUserData, getUserData} = useContext(dataContext)
+  let navigate = useNavigate()
   let file = useRef(null) 
   
   const handleRegister = async(e) => {
@@ -25,12 +26,14 @@ const Register = () => {
       if(backendImage){
         formData.append("profileImage", backendImage)
       }
-      let data = await axios.post(serverUrl + "/api/signup", formData, {
+      await axios.post(serverUrl + "/api/signup", formData, {
         withCredentials: true, headers:{"Content-Type": "multipart/form-data"}
       })
-      console.log(data);
-    } catch (error) {
+      await getUserData()
+      navigate("/home")
+    } catch (error) { 
       console.error(error.response?.data || error.message);
+
     }
   }
 

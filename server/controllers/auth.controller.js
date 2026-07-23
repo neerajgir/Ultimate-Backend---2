@@ -31,13 +31,15 @@ const signUp = async (req, res) => {
             profileImage
         })
 
-        const token = generateToken(user._id)
-        res.cookie("token", token, {
+        const cookieOptions = {
             httpOnly: true,
-            secure: process.env.NODE_ENVIRONMENT == "production",
-            sameSite: "strict",
+            secure: process.env.NODE_ENVIRONMENT === "production",
+            sameSite: process.env.NODE_ENVIRONMENT === "production" ? "strict" : "none",
             maxAge: 7*24*60*60*1000
-        })
+        }
+
+        const token = generateToken(user._id)
+        res.cookie("token", token, cookieOptions)
 
         return res.status(201).json({user: {
             firstName,
@@ -63,18 +65,21 @@ const logIn = async (req,res) => {
         if(!comparePassword) {
             return res.status(400).json({message: "Incorrect Password"})
         }
-        const token = generateToken(existUser._id)
-        res.cookie("token", token, {
+        const cookieOptions = {
             httpOnly: true,
-            secure: process.env.NODE_ENVIRONMENT == "production",
-            sameSite: "strict",
+            secure: process.env.NODE_ENVIRONMENT === "production",
+            sameSite: process.env.NODE_ENVIRONMENT === "production" ? "strict" : "none",
             maxAge: 7*24*60*60*1000
-        })
+        }
+
+        const token = generateToken(existUser._id)
+        res.cookie("token", token, cookieOptions)
         return res.status(200).json({message: "Login Successfully.", user: {
             firstName: existUser.firstName,
             lastName: existUser.lastName,
             email: existUser.email,
-            userName: existUser.userName
+            userName: existUser.userName,
+            profileImage: existUser.profileImage
         }})
     } catch (error) {
         return res.status(400).json(error)
@@ -90,4 +95,20 @@ const logOut = async (req, res) => {
     }
 }
 
-export {signUp, logIn, logOut}
+const getUserData = async (req,res) => {
+    try {
+        let userId = req.userId
+        if(!userId){
+            return res.status(400).json({message: "user id not found"})
+        }
+        let user = await User.findById(userId)
+        if(!user){
+            return res.status(400).json({message: "user not found"})
+        }
+        return res.status(200).json({user})
+    } catch (error) {
+        return res.status(400).json(error)
+    }
+}
+
+export {signUp, logIn, logOut, getUserData}
