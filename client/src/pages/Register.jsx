@@ -11,22 +11,26 @@ const Register = () => {
   const [Password, setPassword] = useState("")
   let {serverUrl} = useContext(dataContext)
   
-  // It is better to start refs for elements as null instead of an empty string
   let file = useRef(null) 
   
   const handleRegister = async(e) => {
     e.preventDefault()
     try {
-      let data = await axios.post(serverUrl + "/api/signup", {
-        firstName: FirstName,
-        lastName: LastName,
-        userName: UserName,
-        email: Email,
-        password: Password
-      }, {withCredentials: true})
+      let formData = new FormData()
+      formData.append("firstName", FirstName)
+      formData.append("lastName", LastName)
+      formData.append("userName", UserName)
+      formData.append("email", Email)
+      formData.append("password", Password)
+      if(backendImage){
+        formData.append("profileImage", backendImage)
+      }
+      let data = await axios.post(serverUrl + "/api/signup", formData, {
+        withCredentials: true, headers:{"Content-Type": "multipart/form-data"}
+      })
       console.log(data);
     } catch (error) {
-      console.log(error.response?.data?.message || error.message);
+      console.error(error.response?.data || error.message);
     }
   }
 
@@ -36,7 +40,7 @@ const Register = () => {
   const handleImage = (e) => {
     let selectedFile = e.target.files[0]
     if (!selectedFile) return 
-    
+
     setBackendImage(selectedFile)
     let image = URL.createObjectURL(selectedFile)
     setFrontendImage(image)
